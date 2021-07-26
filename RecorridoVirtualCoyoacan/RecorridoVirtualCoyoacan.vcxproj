@@ -76,9 +76,13 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>include</AdditionalIncludeDirectories>
+      <AdditionalUsingDirectories>include</AdditionalUsingDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
+      <AdditionalLibraryDirectories>lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc141-mtd.lib;opengl32.lib;glfw3.lib;glew32.lib;SDL2.lib;SDL2main.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -123,6 +127,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="glad.c" />
+    <ClCompile Include="RecorridoVirtual.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\anim.fs" />
+    <None Include="shaders\anim.vs" />
+    <None Include="shaders\shader.fs" />
+    <None Include="shaders\shader.vs" />
+    <None Include="shaders\shader_Lights.fs" />
+    <None Include="shaders\shader_Lights.vs" />
+    <None Include="shaders\shader_projection.fs" />
+    <None Include="shaders\shader_projection.vs" />
+    <None Include="shaders\shader_texture.fs" />
+    <None Include="shaders\shader_texture.vs" />
+    <None Include="shaders\shader_texture_color.fs" />
+    <None Include="shaders\shader_texture_color.vs" />
+    <None Include="shaders\skybox.fs" />
+    <None Include="shaders\skybox.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
