@@ -35,7 +35,6 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void my_input(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 
-
 unsigned int SCR_WIDTH = 1920;
 unsigned int SCR_HEIGHT = 1080;
 GLFWmonitor* monitors;
@@ -118,7 +117,7 @@ int main()
 	Shader skyboxShader("Shaders/skybox.vs", "Shaders/skybox.fs");
 	Shader animShader("Shaders/anim.vs", "Shaders/anim.fs");
 
-	vector<std::string> faces
+	/*vector<std::string> faces
 	{
 		"resources/skybox/right.jpg",
 		"resources/skybox/left.jpg",
@@ -136,10 +135,37 @@ int main()
 		"resources/skybox/bottomNoche.jpg",
 		"resources/skybox/frontNoche.jpg",
 		"resources/skybox/backNoche.jpg"
-	};
+	};*/
 
-	Skybox skybox = Skybox(faces);
-	Skybox skyboxNoche = Skybox(facesNoche);
+
+	std::string skyboxPath = "resources/skybox/";
+	std::string skyboxPathBuf = "resources/skybox/";
+
+
+	/*Skybox skybox = Skybox(faces);
+	Skybox skyboxNoche = Skybox(facesNoche);*/
+
+	Skybox skyboxes[11];
+
+	vector<std::string> skyboxFaces;
+	for (int i = 0; i < 11; i++) {
+
+		skyboxFaces.push_back(skyboxPath.append("Right").append(std::to_string(i)).append(".jpg"));
+		skyboxPath = skyboxPathBuf;
+		skyboxFaces.push_back(skyboxPath.append("Left").append(std::to_string(i)).append(".jpg"));
+		skyboxPath = skyboxPathBuf;
+		skyboxFaces.push_back(skyboxPath.append("Top").append(std::to_string(i)).append(".jpg"));
+		skyboxPath = skyboxPathBuf;
+		skyboxFaces.push_back(skyboxPath.append("Bottom").append(std::to_string(i)).append(".jpg"));
+		skyboxPath = skyboxPathBuf;
+		skyboxFaces.push_back(skyboxPath.append("Front").append(std::to_string(i)).append(".jpg"));
+		skyboxPath = skyboxPathBuf;
+		skyboxFaces.push_back(skyboxPath.append("Back").append(std::to_string(i)).append(".jpg"));
+		skyboxPath = skyboxPathBuf;
+		skyboxes[i].setFaces(skyboxFaces);
+		skyboxFaces.clear();
+	}
+	
 
 	// Shader configuration
 	// --------------------
@@ -149,7 +175,16 @@ int main()
 	skyboxShader.use();
 	skyboxShader.setInt("skyboxNoche", 0);
 
+	//Carga de modelos
 
+	Model pisoDef("resources/objects/pisoDef/pisoDef.obj");
+
+
+	//Variables para el ciclo de dia/noche
+	bool f1 = 1, f2 = 0, f3 = 0;
+	float t = 0.0f;
+	int hora = 0;
+	double paso = 2;
 
 		// LOOP DE RENDERIZADO
 	while (!glfwWindowShouldClose(window))
@@ -163,6 +198,34 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
+		if (f1) {
+			if (t > paso) {
+				hora++;
+				t = 0.0;
+			}
+			if (hora >= 10) {
+				f1 = 0;
+				f2 = 1;
+			}
+		}
+		if (f2) {
+			if (t > paso) {
+				hora--;
+				t = 0.0f;
+			}
+			if (hora <= 0) {
+				f2 = 0;
+				f3 = 1;
+			}
+		}
+		if (f3) {
+			if (t > 5 * paso) {
+				f3 = 0;
+				f1 = 1;
+			}
+		}
+
+		t += 0.01;
 		staticShader.use();
 		//Setup Advanced Lights
 		staticShader.setVec3("viewPos", camera.Position);
@@ -287,6 +350,7 @@ int main()
 
 
 
+
 		staticShader.setFloat("material_shininess", 32.0f);
 
 		glm::mat4 model = glm::mat4(1.0f);
@@ -301,18 +365,41 @@ int main()
 		glm::vec3 lightColor = glm::vec3(0.6f);
 		glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
 		glm::vec3 ambientColor = diffuseColor * glm::vec3(0.75f);
+		//DECLARACIÓN DE SUELOS
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(-20.0f, -1.0f, -30.0f));
+		model = glm::scale(model, glm::vec3(1));
+		staticShader.setMat4("model", model);
+		pisoDef.Draw(staticShader);
 
 
 
-//DIBUJO SKYBOX
+		//**** SHADER MODELOS
+		animShader.use();
+		animShader.setMat4("projection", projection);
+		animShader.setMat4("view", view);
+
+		animShader.setVec3("material.specular", glm::vec3(0.5f));
+		animShader.setFloat("material.shininess", 45.0f);
+		animShader.setVec3("light.ambient", glm::vec3(1.0f, 1.0f, 1.0f));
+		animShader.setVec3("light.diffuse", diffuseColor);
+		animShader.setVec3("light.specular", 0.5f, 0.5f, 0.5f);
+		animShader.setVec3("light.direction", lightDirection);
+		animShader.setVec3("viewPos", camera.Position);
+
+
+		//DIBUJO SKYBOX
 		skyboxShader.use();
-		if (dia == true) { //Ciclo día y noche, cambiamos de Skybox de acuerdo a la bandera DÍA
-			skybox.Draw(skyboxShader, view, projection, camera);
+		
+		skyboxes[hora].Draw(skyboxShader, view, projection, camera);
 
-		}
-		else {
-			skyboxNoche.Draw(skyboxShader, view, projection, camera);
-		}
+		//if (dia == true) { //Ciclo día y noche, cambiamos de Skybox de acuerdo a la bandera DÍA
+		//	skybox.Draw
+
+		//}
+		//else {
+		//	skyboxNoche.Draw(skyboxShader, view, projection, camera);
+		//}
 
 
 		// Limitar el framerate a 60
@@ -324,13 +411,12 @@ int main()
 		}
 		glfwSwapBuffers(window);
 		glfwPollEvents();
-	}
+		}
 
-	skyboxNoche.Terminate();
-	skybox.Terminate();
+		skyboxes[hora].Terminate();
 
-	glfwTerminate();
-	return 0;
+		glfwTerminate();
+		return 0;
 }
 
 //CONFIGURACIÓN DE ENTRADAS

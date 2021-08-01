@@ -22,12 +22,18 @@ public:
 
 	// Constructor
 	// -----------
+
+	Skybox() {}
 	Skybox(vector<std::string> faces) {
 		this->faces = faces;
 
 		setupSkybox();
 	}
+	void setFaces(vector<std::string> faces) {
+		this->faces = faces;
 
+		setupSkybox();
+	}
 	// draw skybox as last
 	// -------------------
 	void Draw(Shader shader, glm::mat4 view, glm::mat4 projection, Camera camera) {
