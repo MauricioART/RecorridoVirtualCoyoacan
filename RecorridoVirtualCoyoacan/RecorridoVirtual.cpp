@@ -117,38 +117,15 @@ int main()
 	Shader skyboxShader("Shaders/skybox.vs", "Shaders/skybox.fs");
 	Shader animShader("Shaders/anim.vs", "Shaders/anim.fs");
 
-	/*vector<std::string> faces
-	{
-		"resources/skybox/right.jpg",
-		"resources/skybox/left.jpg",
-		"resources/skybox/top.jpg",
-		"resources/skybox/bottom.jpg",
-		"resources/skybox/front.jpg",
-		"resources/skybox/back.jpg"
-	};
-
-	vector<std::string> facesNoche
-	{
-		"resources/skybox/rightNoche.jpg",
-		"resources/skybox/leftNoche.jpg",
-		"resources/skybox/topNoche.jpg",
-		"resources/skybox/bottomNoche.jpg",
-		"resources/skybox/frontNoche.jpg",
-		"resources/skybox/backNoche.jpg"
-	};*/
-
+	
 
 	std::string skyboxPath = "resources/skybox/";
 	std::string skyboxPathBuf = "resources/skybox/";
 
-
-	/*Skybox skybox = Skybox(faces);
-	Skybox skyboxNoche = Skybox(facesNoche);*/
-
-	Skybox skyboxes[11];
+	Skybox skyboxes[8];
 
 	vector<std::string> skyboxFaces;
-	for (int i = 0; i < 11; i++) {
+	for (int i = 0; i < 8; i++) {
 
 		skyboxFaces.push_back(skyboxPath.append("Right").append(std::to_string(i)).append(".jpg"));
 		skyboxPath = skyboxPathBuf;
@@ -178,7 +155,7 @@ int main()
 	//Carga de modelos
 
 	Model pisoDef("resources/objects/pisoDef/pisoDef.obj");
-
+	Model kiosco("resources/objects/Kiosko/Kiosco.obj");
 
 	//Variables para el ciclo de dia/noche
 	bool f1 = 1, f2 = 0, f3 = 0;
@@ -203,7 +180,7 @@ int main()
 				hora++;
 				t = 0.0;
 			}
-			if (hora >= 10) {
+			if (hora >= 7) {
 				f1 = 0;
 				f2 = 1;
 			}
@@ -219,7 +196,7 @@ int main()
 			}
 		}
 		if (f3) {
-			if (t > 5 * paso) {
+			if (t > 4 * paso) {
 				f3 = 0;
 				f1 = 1;
 			}
@@ -230,16 +207,23 @@ int main()
 		//Setup Advanced Lights
 		staticShader.setVec3("viewPos", camera.Position);
 		staticShader.setVec3("dirLight.direction", lightDirection);
-		if (dia == true) {
+		if (hora > 3) {
 			staticShader.setVec3("dirLight.ambient", glm::vec3(0.33f, 0.33f, 0.33f));
 			staticShader.setVec3("dirLight.diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
 			staticShader.setVec3("dirLight.specular", glm::vec3(0, 0, 0));
+		}
+		else if (hora <=3 && hora >0){
+			staticShader.setVec3("dirLight.ambient", glm::vec3(0.001f, 0.001f, 0.001f));
+			staticShader.setVec3("dirLight.diffuse", glm::vec3(0.4f, 0.4f, 0.4f));
+			staticShader.setVec3("dirLight.specular", glm::vec3(0.4f, 0.4f, 0.4f));
 		}
 		else {
 			staticShader.setVec3("dirLight.ambient", glm::vec3(0.001f, 0.001f, 0.001f));
 			staticShader.setVec3("dirLight.diffuse", glm::vec3(0.1f, 0.1f, 0.1f));
 			staticShader.setVec3("dirLight.specular", glm::vec3(0.1f, 0.1f, 0.1f));
+
 		}
+
 
 		//Luz Día y noche
 		if (dia == true) {
