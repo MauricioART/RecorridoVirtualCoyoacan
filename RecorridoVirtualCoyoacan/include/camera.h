@@ -71,12 +71,13 @@ public:
     {
         //glm::vec3 absFront = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), Right)); // Para que el frente no tome en cuenta el giro
 
-        float velocity = MovementSpeed * deltaTime;
+        float velocity = MovementSpeed * deltaTime / 5;
         if (direction == FORWARD)
             Position += glm::vec3(Front.x, 0.0f, Front.z) * velocity;
         //Position += newFront * velocity;
         if (direction == BACKWARD)
             Position -= glm::vec3(Front.x, 0.0f, Front.z) * velocity;
+            Position -= Front * velocity;
         //Position -= newFront * velocity;
         if (direction == LEFT)
             Position -= Right * velocity;
