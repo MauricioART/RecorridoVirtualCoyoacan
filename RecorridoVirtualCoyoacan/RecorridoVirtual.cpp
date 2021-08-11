@@ -155,7 +155,7 @@ int main()
 	//Carga de modelos
 
 	Model pisoDef("resources/objects/pisoDef/pisoDef.obj");
-	Model kiosco("resources/objects/Kiosko/Kiosco.obj");
+	Model kiosco("resources/objects/Kiosco/Kiosco.obj");
 
 	//Variables para el ciclo de dia/noche
 	bool f1 = 1, f2 = 0, f3 = 0;
